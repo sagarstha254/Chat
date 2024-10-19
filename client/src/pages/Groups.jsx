@@ -1,7 +1,8 @@
-import React, { memo, Suspense, useEffect, useState } from "react";
+import React, { lazy, memo, Suspense, useEffect, useState } from "react";
 import {
   Backdrop,
   Box,
+  Button,
   ButtonGroup,
   Drawer,
   Grid,
@@ -11,7 +12,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { matBlack } from "../constants/color";
+import { bgGradient, matBlack } from "../constants/color";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Add as AddIcon,
@@ -86,7 +87,6 @@ const Groups = () => {
       setGroupName(`Group Name ${chatId}`);
       setGroupNameUpdatedValue(`Group Name ${chatId}`);
     }
-    // continue here 4:43:18 
 
     return () => {
       setGroupName("");
@@ -196,9 +196,10 @@ const Groups = () => {
     <Grid container height={"100vh"}>
       <Grid
         item
-        sx={{ display: { xs: "none", sm: "block" } }}
+        sx={{
+          display: { xs: "none", sm: "block" },
+        }}
         sm={4}
-        bgcolor={"bisque  "}
       >
         <GroupsList myGroups={sampleChats} chatId={chatId} />
       </Grid>
@@ -293,7 +294,7 @@ const Groups = () => {
 };
 
 const GroupsList = ({ w = "100%", myGroups = [], chatId }) => (
-  <Stack width={w}>
+  <Stack width={w} sx={{ backgroundImage: bgGradient, height: "100vh" }}>
     {myGroups.length > 0 ? (
       myGroups.map((group) => (
         <GroupListItem group={group} chatId={chatId} key={group._id} />

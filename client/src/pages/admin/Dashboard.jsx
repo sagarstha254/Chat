@@ -14,6 +14,8 @@ import {
   SearchField,
 } from "../../components/styles/StyledComponent";
 import { matBlack } from "../../constants/color";
+import { Line } from "react-chartjs-2";
+import { Doughnut, LineChart } from "../../components/specific/Charts";
 
 const Dashboard = () => {
   const Appbar = (
@@ -70,13 +72,12 @@ const Dashboard = () => {
               borderRadius: "1rem",
               width: "100%",
               maxWidth: "45rem",
-              height: "25rem",
             }}
           >
             <Typography margin={"2rem 0"} variant="h4">
               Last Messages
             </Typography>
-            {"Chat"}
+            <LineChart value={[12,23,23,32]}/>
           </Paper>
           <Paper
             elevation={3}
@@ -93,8 +94,7 @@ const Dashboard = () => {
               height: "25rem",
             }}
           >
-            {"Doughnut Chart"}
-
+            <Doughnut />
             <Stack
               position={"absolute"}
               direction={"row"}
@@ -118,10 +118,11 @@ const Dashboard = () => {
 
 const Widget = ({ title, value, Icon }) => (
   <Paper
+    elevation={3}
     sx={{
       padding: "2rem",
       margin: "2rem 0",
-      borderRadius: "1rem",
+      borderRadius: "1.5rem",
       width: "20rem",
     }}
   >
@@ -141,7 +142,6 @@ const Widget = ({ title, value, Icon }) => (
         {value}
       </Typography>
       <Stack direction={"row"} spacing={"1rem"} alignItems={"center"}>
-        {/* //stop here 5:42:00  */}
         {Icon}
         <Typography>{title}</Typography>
       </Stack>

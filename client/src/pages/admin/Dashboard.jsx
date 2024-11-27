@@ -14,8 +14,7 @@ import {
   SearchField,
 } from "../../components/styles/StyledComponent";
 import { matBlack } from "../../constants/color";
-import { Line } from "react-chartjs-2";
-import { Doughnut, LineChart } from "../../components/specific/Charts";
+import { DoughnutChart, LineChart } from "../../components/specific/Charts";
 
 const Dashboard = () => {
   const Appbar = (
@@ -64,7 +63,16 @@ const Dashboard = () => {
       <Container component={"main"}>
         {Appbar}
 
-        <Stack direction={"row"} spacing={"2rem"} flexWrap={"wrap"}>
+        <Stack
+          direction={{ xs: "column", lg: "row" }}
+          flexWrap={"Wrap"}
+          justifyContent={"center"}
+          alignItems={{
+            xs: "center",
+            lg: "stretch",
+          }}
+          sx={{ gap: "2rem" }}
+        >
           <Paper
             elevation={3}
             sx={{
@@ -77,7 +85,7 @@ const Dashboard = () => {
             <Typography margin={"2rem 0"} variant="h4">
               Last Messages
             </Typography>
-            <LineChart value={[12,23,23,32]}/>
+            <LineChart value={[12, 23, 23, 32]} />
           </Paper>
           <Paper
             elevation={3}
@@ -91,10 +99,12 @@ const Dashboard = () => {
               position: "relative",
               width: "100%",
               maxWidth: "25rem",
-              height: "25rem",
             }}
           >
-            <Doughnut />
+            <DoughnutChart
+              labels={["Single Chats", "Group Chats"]}
+              value={[23, 66]}
+            />
             <Stack
               position={"absolute"}
               direction={"row"}

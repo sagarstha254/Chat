@@ -1,5 +1,6 @@
-import { User } from "../models/user.js";
 import { faker } from "@faker-js/faker";
+import { User } from "../models/user.js";
+
 const createUser = async (numUsers) => {
   try {
     const usersPromise = [];
@@ -20,7 +21,9 @@ const createUser = async (numUsers) => {
     await Promise.all(usersPromise);
     console.log("Users Created", numUsers);
     process.exit(1);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export { createUser };

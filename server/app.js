@@ -1,11 +1,10 @@
-import express from "express";
-import { connectDB } from "./utils/features.js";
-import dotenv from "dotenv";
-import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
-import userRoute from "./routes/user.js";
+import dotenv from "dotenv";
+import express from "express";
+import { errorMiddleware } from "./middlewares/error.js";
 import chatRoute from "./routes/chat.js";
-import { createUser } from "./seeders/user.js";
+import userRoute from "./routes/user.js";
+import { connectDB } from "./utils/features.js";
 
 dotenv.config({
   path: "./.env",
@@ -15,6 +14,7 @@ const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
 
 connectDB(mongoURI);
+
 const app = express();
 
 //Using Middleware
@@ -33,3 +33,6 @@ app.use(errorMiddleware);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+//4:27:10 / 6:58:35
+

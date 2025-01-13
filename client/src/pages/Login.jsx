@@ -1,3 +1,5 @@
+import { useFileHandler, useInputValidation } from "6pp";
+import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import {
   Avatar,
   Button,
@@ -8,15 +10,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import React, { useState } from "react";
-import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponent";
-import { useFileHandler, useInputValidation } from "6pp";
-import { usernameValidator } from "../utils/validators";
 import { bgGradient } from "../constants/color";
+import { server } from "../constants/config";
+import { userExists } from "../redux/reducers/auth";
+import { usernameValidator } from "../utils/validators";
 
 const Login = () => {
   const [isLogin, setIslogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const toggleLogin = () => setIslogin((prev) => !prev);
 
   const name = useInputValidation("");
@@ -24,14 +30,79 @@ const Login = () => {
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
   const avatar = useFileHandler("single");
+  const dispatch = useDispatch();
 
-  const handleLogin = (e) => {
-    e.preventDefault;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const toastId = toast.loading("Logging In...");
+    setIsLoading(true);
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignup = (e) => {
-    e.preventDefault; 
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    const toastId = toast.loading("Signing Up...");
+
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/new`,
+        formData,
+        config
+      );
+      dispatch(userExists(data.user));
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   return (
     <div
       style={{
@@ -90,6 +161,7 @@ const Login = () => {
                   color="primary"
                   type="submit"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Login
                 </Button>
@@ -97,7 +169,12 @@ const Login = () => {
                 <Typography textAlign={"center"} m={"1rem "}>
                   OR
                 </Typography>
-                <Button variant="text" fullWidth onClick={toggleLogin}>
+                <Button
+                  disabled={isLoading}
+                  variant="text"
+                  fullWidth
+                  onClick={toggleLogin}
+                >
                   Sign Up Instead
                 </Button>
               </form>
@@ -201,6 +278,7 @@ const Login = () => {
                   color="primary"
                   type="submit"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Sign Up
                 </Button>
@@ -208,7 +286,12 @@ const Login = () => {
                 <Typography textAlign={"center"} m={"1rem "}>
                   OR
                 </Typography>
-                <Button variant="text" fullWidth onClick={toggleLogin}>
+                <Button
+                  disabled={isLoading}
+                  variant="text"
+                  fullWidth
+                  onClick={toggleLogin}
+                >
                   Login Instead
                 </Button>
               </form>

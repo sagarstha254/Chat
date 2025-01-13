@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import AdminLayout from "../../components/layout/AdminLayout";
-import { Avatar, Box, Stack } from "@mui/material";
-import Table from "../../components/shared/Table";
-import { dashboardData } from "../../constants/sampleData";
-import { fileFormat, transformImage } from "../../lib/features";
+import { Avatar, Box, Skeleton, Stack } from "@mui/material";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import AdminLayout from "../../components/layout/AdminLayout";
 import RenderAttachment from "../../components/shared/RenderAttachment";
+import Table from "../../components/shared/Table";
+import { useErrors } from "../../hooks/hooks";
+import { fileFormat, transformImage } from "../../lib/features";
+import { getAllMessages } from "../../redux/thunks/admin";
 
 const columns = [
   {
@@ -82,28 +84,49 @@ const columns = [
 const MessageManagement = () => {
   const [rows, setRows] = useState([]);
 
+  const dispatch = useDispatch();
+
+  const { loading, data, error } = useSelector((state) => state.auth);
   useEffect(() => {
-    setRows(
-      dashboardData.messages.map((i) => ({
-        ...i,
-        id: i._id,
-        sender: {
-          name: i.sender.name,
-          avatar: transformImage(i.sender.avatar, 50),
-        },
-        createdAt: moment(i.createdAt).format("MMMM Do YYYY, h:mm:ss a"),
-      }))
-    );
-  }, []);
+    dispatch(getAllMessages());
+  }, [dispatch]);
+
+  useErrors([
+    {
+      isError: error,
+      error: error,
+    },
+  ]);
+  console.log(data, "d");
+
+  useEffect(() => {
+    if (data) {
+      setRows(
+        data.messages.map((i) => ({
+          ...i,
+          id: i._id,
+          sender: {
+            name: i.sender.name,
+            avatar: transformImage(i.sender.avatar, 50),
+          },
+          createdAt: moment(i.createdAt).format("MMMM Do YYYY, h:mm:ss a"),
+        }))
+      );
+    }
+  }, [data]);
 
   return (
     <AdminLayout>
-      <Table
-        heading={"All Messages"}
-        columns={columns}
-        rows={rows}
-        rowHeight={200}
-      />
+      {loading ? (
+        <Skeleton height={"100vh"} />
+      ) : (
+        <Table
+          heading={"All Messages"}
+          columns={columns}
+          rows={rows}
+          rowHeight={200}
+        />
+      )}
     </AdminLayout>
   );
 };

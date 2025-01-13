@@ -1,9 +1,12 @@
+import { Avatar, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
-import { Avatar } from "@mui/material";
 import Table from "../../components/shared/Table";
 import { dashboardData } from "../../constants/sampleData";
 import { transformImage } from "../../lib/features";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers } from "../../redux/thunks/admin";
+import { useErrors } from "../../hooks/hooks";
 
 const columns = [
   {
@@ -50,19 +53,39 @@ const columns = [
 const UserManagement = () => {
   const [rows, setRows] = useState([]);
 
+  const dispatch = useDispatch();
+
+  const { loading, allUsers, error } = useSelector((state) => state.auth);
   useEffect(() => {
-    setRows(
-      dashboardData.users.map((i) => ({
-        ...i,
-        id: i._id,
-        avatar: transformImage(i.avatar, 50),
-      }))
-    );
-  }, []);
+    dispatch(getAllUsers());
+  }, [dispatch]);
+
+  useErrors([
+    {
+      isError: error,
+      error: error,
+    },
+  ]);
+
+  useEffect(() => {
+    if (allUsers) {
+      setRows(
+        allUsers.users.map((i) => ({
+          ...i,
+          id: i._id,
+          avatar: transformImage(i.avatar, 50),
+        }))
+      );
+    }
+  }, [allUsers]);
 
   return (
     <AdminLayout>
-      <Table heading={"All Users"} columns={columns} rows={rows} />
+      {loading ? (
+        <Skeleton height={"100vh"} />
+      ) : (
+        <Table heading={"All Users"} columns={columns} rows={rows} />
+      )}
     </AdminLayout>
   );
 };

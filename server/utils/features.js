@@ -18,6 +18,7 @@ const connectDB = (uri) => {
     .catch((err) => {
       throw err;
     });
+  console.log(uri);
 };
 
 const sendToken = (res, user, code, message) => {

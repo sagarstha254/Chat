@@ -62,7 +62,7 @@ app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
 
 app.get("/", (req, res) => {
-  res.send("hello world");
+  res.send("Welocme to Chat App");
 });
 
 io.use((socket, next) => {
